@@ -1,0 +1,4 @@
+.table-head {
+  width: 100%;
+  height: clamp(2em, 200px, 5em);
+}
