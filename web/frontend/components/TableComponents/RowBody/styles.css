@@ -1,0 +1,10 @@
+.row-body {
+  width: 100%;
+  height: clamp(2em, 200px, 5em);
+}
+
+.row-body .row-body-tr {
+  width: 100%;
+  height: 50px;
+  position: relative;
+}

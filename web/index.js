@@ -1,9 +1,8 @@
-// @ts-check
+// @ts-nocheck
 import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
-
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
@@ -54,6 +53,111 @@ app.get("/api/products/all", async (_req, res) => {
     });
 
     res.status(200).send(allProductsData);
+  } catch (e) {
+    res.send(e);
+  }
+});
+
+app.get("/api/products/collections/all", async (_req, res) => {
+  try {
+    const session = res.locals.shopify.session;
+    const graphQLclient = new shopify.api.clients.Graphql({ session });
+
+    const queryString = `{
+      collections(first: 10) {
+        edges {
+          node {
+            id
+            title
+            description
+            handle
+            productsCount
+          }
+        }
+      }
+    }`;
+
+    const collections = await graphQLclient.query({
+      data: queryString,
+    });
+
+    let productsInCollectionValue = [];
+
+    for (
+      let i = 0;
+      i < collections?.body?.data?.collections?.edges?.length;
+      i++
+    ) {
+      const id = collections?.body?.data?.collections?.edges[i]?.["node"][
+        "id"
+      ].replace("gid://shopify/Collection/", "");
+
+      const title =
+        collections?.body?.data?.collections?.edges[i]?.["node"]?.["title"];
+
+      const resultValue = await shopify.api.rest.Collection.products({
+        session: session,
+        id: id,
+      });
+
+      productsInCollectionValue.push(...[{ [title]: resultValue.products }]);
+    }
+
+    res.status(200).send({
+      collections,
+      productsInCollectionValue:
+        productsInCollectionValue.length > 0 ? productsInCollectionValue : [],
+    });
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+app.get("/api/products/perProducts/:id", async (_req, res) => {
+  try {
+    const id = _req?.params?.id;
+    const session = res.locals.shopify.session;
+    const graphQLclient = new shopify.api.clients.Graphql({ session });
+
+    const queryString = `
+    {
+      product(id: "gid://shopify/Product/${id}") {
+        id
+        title
+        description
+        vendor
+        handle
+        variants(first:5) {
+          edges {
+            node {
+              id
+              title
+              price
+              inventoryQuantity
+            }
+          }
+        }
+        status
+        description
+        productType
+        totalInventory
+        images(first:5) {
+          edges {
+            node {
+              id
+              url
+            }
+          }
+        }
+      }
+    }
+    `;
+
+    const data = await graphQLclient.query({
+      data: queryString,
+    });
+
+    res.status(200).send(data);
   } catch (e) {
     res.send(e);
   }
