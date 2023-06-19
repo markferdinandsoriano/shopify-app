@@ -33,7 +33,7 @@ const ProductUpdaterModal = () => {
         title={model.data?.["title"]}
         primaryAction={{
           content: "Update Product",
-          onAction: () => {},
+          onAction: () => model?.handleUpdateProduct(),
         }}
         secondaryActions={[
           {
@@ -68,7 +68,7 @@ const ProductUpdaterModal = () => {
                       value={model?.collectionTitleValue}
                     />
                     <Button onClick={model?.handleOpenVariants}>
-                      Update Variants
+                      Change Variants
                     </Button>
                   </FormLayout>
                 </HorizontalGrid>
@@ -110,6 +110,7 @@ const ProductUpdaterModal = () => {
                     <TextField
                       type="number"
                       label="Stocks"
+                      value={model?.data?.totalInventory}
                       onChange={(value) =>
                         model?.handleFormChange(value, "totalInventory")
                       }

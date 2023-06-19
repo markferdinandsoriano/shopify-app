@@ -2,6 +2,10 @@
   width: 100%;
   height: clamp(2em, 200px, 5em);
 }
+.row-body .action-buttons {
+  width: 100%;
+  background-color: blue;
+}
 
 .row-body .row-body-tr {
   width: 100%;

@@ -12,6 +12,7 @@ import {
 } from "@shopify/polaris";
 
 import ProductUpdaterModal from "../ProductPageUpdater";
+import PaginationComponent from "../Pagination";
 import ViewModel from "./viewModel";
 
 const ProductList = () => {
@@ -32,6 +33,10 @@ const ProductList = () => {
               renderItem={(item) => {
                 const { id, title, image, vendor, status } = item;
 
+                const newImage = image
+                  ? image?.src
+                  : item?.images["edges"]?.[0]?.["node"]?.["url"];
+
                 return (
                   <ResourceItem
                     id={id}
@@ -44,11 +49,11 @@ const ProductList = () => {
                       primaryAction={{
                         content: "Update Product",
                         onAction: () => {
-                          model.handleOpenModal();
-                          model.handleSelectedProduct({
+                          model.handleOpenModal(id);
+                          model.handleFetchSelectedProduct({
                             id,
                             title,
-                            image,
+                            newImage,
                             vendor,
                             status,
                           });
@@ -65,7 +70,7 @@ const ProductList = () => {
                           objectFit: "cover",
                           objectPosition: "center",
                         }}
-                        src={`${image?.src}?width=300`}
+                        src={`${newImage}?width=300`}
                       />
                     </MediaCard>
                   </ResourceItem>
@@ -86,6 +91,9 @@ const ProductList = () => {
             </EmptyState>
           )}
         </Scrollable>
+      </Layout.Section>
+      <Layout.Section>
+        <PaginationComponent />
       </Layout.Section>
       <ProductUpdaterModal />
     </>

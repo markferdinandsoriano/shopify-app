@@ -1,18 +1,13 @@
 import React from "react";
-
 import Headers from "../TableComponents/Headers";
 import RowBody from "../TableComponents/RowBody";
 import "./styles.css";
 
-import ViewModel from "./viewModel";
-
-const Table = () => {
-  const model = ViewModel();
-
+const Table = ({ headers, data }) => {
   return (
     <table className="Table-container">
-      <Headers />
-      <RowBody />
+      <Headers headers={headers} />
+      <RowBody data={data} headers={headers} />
     </table>
   );
 };

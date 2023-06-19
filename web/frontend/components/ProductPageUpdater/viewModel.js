@@ -1,5 +1,5 @@
 import React from "react";
-import { useAppQuery } from "../../hooks";
+import { useAppQuery, useAuthenticatedFetch } from "../../hooks";
 import getNestedObject from "../../utils/getNestedObjects";
 import useProductStateStore from "../../store/product-update";
 
@@ -12,6 +12,7 @@ const ViewModel = () => {
     collectionTitleValue,
     productsInCollections,
     openModal,
+    loadingSelectedProduct,
     handleGetCollectionTitleValue,
     handleGetProductValue,
     handleChangeProductDataValue,
@@ -19,23 +20,13 @@ const ViewModel = () => {
     handleOpenProductVariant,
   } = useProductStateStore();
 
+  const fetch = useAuthenticatedFetch();
+
   const productId = React.useRef(null);
   const collectionTitleRef = React.useRef(false);
   const productDataRef = React.useRef(false);
 
   productId.current = selectedProduct?.id;
-
-  const { data, isLoading } = useAppQuery({
-    url: `/api/products/perProducts/${productId?.current}`,
-  });
-
-  productDataRef.current = getNestedObject(data, ["body", "data", "product"]);
-
-  React.useEffect(() => {
-    if (productDataRef.current) {
-      handleGetProductValue(productDataRef?.current);
-    }
-  }, [productDataRef.current]);
 
   const collectionTitleResult = productsInCollections?.find((items) => {
     const newItemsArr = Object.values(items)?.[0].map((items) => items.id);
@@ -49,11 +40,12 @@ const ViewModel = () => {
 
   collectionTitleRef.current = collectionTitleOfProduct;
 
-  const checkIfVariantsMoreThanTwo =
-    getNestedObject(data, ["body", "data", "product", "variants", "edges"])
-      ?.length > 1
-      ? true
-      : false;
+  const productDatalength = getNestedObject(productData, [
+    "variants",
+    "edges",
+  ])?.length;
+
+  const checkIfVariantsMoreThanTwo = productDatalength > 1 ? true : false;
 
   React.useEffect(() => {
     if (collectionTitleRef?.current) {
@@ -87,28 +79,33 @@ const ViewModel = () => {
     handleOpenProductVariant(true);
   }, []);
 
-  console.log("productData", productData);
+  const handleUpdateProduct = async () => {
+    const productToUpdate = JSON.stringify(productData);
+    fetch("/api/products/variants/update", {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: productToUpdate,
+    });
+  };
 
   return {
     data: productData,
-    isLoading,
+    isLoading: loadingSelectedProduct,
     statusOptions,
     collectionOptions,
     collectionTitleValue: collectionTitleValue?.toLowerCase(),
     checkIfVariantsMoreThanTwo,
-    variantsLength: getNestedObject(data, [
-      "body",
-      "data",
-      "product",
-      "variants",
-      "edges",
-    ])?.length,
+    variantsLength: productDatalength,
     openModal,
     handleStatusChange,
     handleCollectionsChange,
     handleFormChange,
     handleClose,
     handleOpenVariants,
+    handleUpdateProduct,
   };
 };
 
