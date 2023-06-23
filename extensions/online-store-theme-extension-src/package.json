@@ -18,10 +18,10 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "GENERATE_SOURCEMAP=false craco build && cp ./dist/js/*.js ../online-store-theme-extension/assets",
+    "build": "cmd.exe /C cross-env GENERATE_SOURCEMAP=false && craco build && Xcopy /dist/js/*.js ../online-store-theme-extension/assets",
     "test": "craco test",
     "eject": "craco eject",
-    "build:extension": "cd online-store-theme-extension/online-store-theme-extension-src && npm run build",
+    "build:extension": "cd extensions/online-store-theme-extension-src && npm run build",
     "deploy": "npm run build:extension && shopify app deploy"
   },
   "eslintConfig": {
