@@ -1,7 +1,14 @@
 import React from "react";
 import { TextField, Text } from "@shopify/polaris";
 
-const EditMode = ({ data, indexValue, editIndex, handleChange, type }) => {
+const EditMode = ({
+  data,
+  indexValue,
+  editIndex,
+  handleChange,
+  type,
+  title,
+}) => {
   return (
     <>
       {indexValue === editIndex ? (
@@ -10,6 +17,7 @@ const EditMode = ({ data, indexValue, editIndex, handleChange, type }) => {
           value={data}
           onChange={handleChange}
           type={type}
+          disabled={title === "Variants" || title === "Stocks" ? true : false}
           maxLength={type === "number" ? 4 : null}
         />
       ) : (

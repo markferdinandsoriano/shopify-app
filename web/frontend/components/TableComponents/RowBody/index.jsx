@@ -7,6 +7,7 @@ import {
 import React from "react";
 import getNestedObject from "../../../utils/getNestedObjects";
 import EditMode from "./EditMode";
+
 import ViewModel from "./viewModel";
 
 import "./styles.css";
@@ -58,6 +59,7 @@ const RowComponent = ({ data, headers }) => {
                             index
                           )
                         }
+                        title={getNestedObject(headerItems, ["title"])}
                         indexValue={index}
                         editIndex={model?.editIndex}
                       />

@@ -16,6 +16,7 @@ const ViewModel = () => {
     handleGetProductValue,
     handleSetLoadingSelectedProduct,
     handleGetProductCounts,
+    isUpdated,
   } = useProductStateStore();
 
   const fetch = useAuthenticatedFetch();
@@ -56,6 +57,12 @@ const ViewModel = () => {
       handleGetProductCounts(productsDataRef?.current?.productCount?.count);
     }
   }, [productsDataRef?.current]);
+
+  React.useEffect(() => {
+    if (isUpdated) {
+      refetch();
+    }
+  }, [isUpdated]);
 
   const { data: dataCollections } = useAppQuery({
     url: "/api/products/collections/all",
@@ -119,6 +126,22 @@ const ViewModel = () => {
     } finally {
       handleSetLoadingSelectedProduct(false);
     }
+  }, []);
+
+  const fetchDatass = async () => {
+    const result = await fetch("/api/testing/mongodb", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("resultss", result);
+  };
+
+  React.useEffect(() => {
+    fetchDatass();
   }, []);
 
   const handleFetchSelectedProduct = React.useCallback(async (data) => {

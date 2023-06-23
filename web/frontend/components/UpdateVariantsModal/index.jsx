@@ -1,6 +1,6 @@
 import React from "react";
-import { Modal, LegacyCard, Layout } from "@shopify/polaris";
-
+import { Modal, LegacyCard, Layout, Frame } from "@shopify/polaris";
+import Toastcomponent from "../ToastMessage";
 import { headers, products } from "../../utils/mockDatas";
 
 import ViewModel from "./viewModel";
@@ -22,15 +22,22 @@ const UpdateVariantsModal = () => {
         onAction: () => model?.handleClose(),
       }}
     >
-      <Modal.Section>
-        <LegacyCard>
-          <Layout>
-            <Layout.Section>
-              <Table headers={headers} data={model?.variants} />
-            </Layout.Section>
-          </Layout>
-        </LegacyCard>
-      </Modal.Section>
+      <Frame>
+        <Modal.Section>
+          <LegacyCard>
+            <Layout>
+              <Layout.Section>
+                <Table headers={headers} data={model?.variants} />
+              </Layout.Section>
+            </Layout>
+          </LegacyCard>
+        </Modal.Section>
+
+        <Toastcomponent
+          message={model?.toastMessage?.message}
+          isOpen={model?.toastMessage?.isOpen}
+        />
+      </Frame>
     </Modal>
   );
 };

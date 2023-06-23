@@ -18,6 +18,8 @@ const ViewModel = () => {
     handleChangeProductDataValue,
     handleSetOpenModal,
     handleOpenProductVariant,
+    handleProductUpdated,
+    isUpdated,
   } = useProductStateStore();
 
   const fetch = useAuthenticatedFetch();
@@ -81,14 +83,26 @@ const ViewModel = () => {
 
   const handleUpdateProduct = async () => {
     const productToUpdate = JSON.stringify(productData);
-    fetch("/api/products/variants/update", {
-      method: "PATCH",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: productToUpdate,
-    });
+    try {
+      const results = await fetch("/api/products/variants/update", {
+        method: "PATCH",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: productToUpdate,
+      });
+
+      if (results?.status === 200) {
+        handleProductUpdated(true);
+      }
+    } catch (error) {
+      handleProductUpdated(false);
+    } finally {
+      setTimeout(() => {
+        handleProductUpdated(false);
+      }, 2000);
+    }
   };
 
   return {
@@ -100,6 +114,7 @@ const ViewModel = () => {
     checkIfVariantsMoreThanTwo,
     variantsLength: productDatalength,
     openModal,
+    isUpdated,
     handleStatusChange,
     handleCollectionsChange,
     handleFormChange,

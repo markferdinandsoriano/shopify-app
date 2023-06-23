@@ -1,17 +1,19 @@
 // @ts-nocheck
 import { join } from "path";
 import { readFileSync } from "fs";
-import express from "express";
+import express, { Router } from "express";
 import serveStatic from "serve-static";
 import shopify from "./shopify.js";
-import { Shopify } from "@shopify/shopify-api";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
+import { getTesting } from "./proxyRoutes.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
   10
 );
+
+const proxyRouter = Router();
 
 const STATIC_PATH =
   process.env.NODE_ENV === "production"
@@ -35,9 +37,11 @@ app.post(
 // If you are adding routes outside of the /api path, remember to
 // also add a proxy rule for them in web/frontend/vite.config.js
 
-app.use("/api/*", shopify.validateAuthenticatedSession());
-
 app.use(express.json());
+
+getTesting(app, shopify);
+
+app.use("/api/*", shopify.validateAuthenticatedSession());
 
 app.get("/api/products/count", async (_req, res) => {
   const countData = await shopify.api.rest.Product.count({
@@ -266,26 +270,27 @@ app.post("/api/products/productVariants/updateVariants", async (_req, res) => {
     }
   `;
 
-    const resultValue = newVariants.map(async (items) => {
+    let ProductVariantResult = [];
+
+    for (let i = 0; i < newVariants.length; i++) {
       const productVariant = await graphQLclient.query({
         data: {
           query: productVariantsQuery,
           variables: {
             input: {
-              id: items?.id,
-              title: items?.title,
-              price: items?.price,
+              id: newVariants?.[i]?.id,
+              price: newVariants?.[i]?.price,
             },
           },
         },
       });
 
-      return productVariant;
-    });
+      ProductVariantResult.push(
+        productVariant?.body?.data?.productVariantUpdate?.productVariant
+      );
+    }
 
-    console.log("resultValue", resultValue);
-
-    res.status(200).send(resultValue);
+    res.status(200).send(ProductVariantResult);
   } catch (error) {
     res.send(error);
   }
@@ -336,9 +341,6 @@ app.patch("/api/products/variants/update", async (_req, res) => {
             handle,
             status: status?.toUpperCase(),
             vendor,
-            // productType,
-            // totalInventory,
-            // images,
           },
         },
       },
@@ -510,6 +512,10 @@ app.get("/api/products/create", async (_req, res) => {
     error = e.message;
   }
   res.status(status).send({ success: status === 200, error });
+});
+
+proxyRouter.get("/", async (_req, res) => {
+  res.status(200).send({ content: "Proxy Be Working" });
 });
 
 app.use(shopify.cspHeaders());

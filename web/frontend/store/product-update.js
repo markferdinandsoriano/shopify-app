@@ -26,6 +26,31 @@ const useProductStateStore = create((set) => ({
   collectionOptions: [],
   collectionTitleValue: "",
   productsInCollections: [],
+  toastMessage: {
+    message: "",
+    isOpen: false,
+  },
+  isUpdated: false,
+  handleProductUpdated: (bool) => {
+    set((state) => {
+      return {
+        ...state,
+        isUpdated: bool,
+      };
+    });
+  },
+  handleOpenToast: (data) => {
+    set((state) => {
+      return {
+        ...state,
+        toastMessage: {
+          ...state?.toastMessage,
+          message: data?.message,
+          isOpen: data?.isOpen,
+        },
+      };
+    });
+  },
   handleGetProductCounts: (count) => {
     set((state) => {
       return {
@@ -76,7 +101,6 @@ const useProductStateStore = create((set) => ({
   },
   handleSelectedProduct: (products) =>
     set((state) => {
-      console.log("products selected", products);
       return {
         ...state,
         selectedProduct: products,
