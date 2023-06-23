@@ -1,16 +1,13 @@
 import React from "react";
-import {
-  Modal,
-  IndexTable,
-  LegacyCard,
-  useIndexResourceState,
-  Text,
-  Badge,
-} from "@shopify/polaris";
+import { Modal, LegacyCard, Layout, Frame } from "@shopify/polaris";
+import Toastcomponent from "../ToastMessage";
+import { headers, products } from "../../utils/mockDatas";
 
 import ViewModel from "./viewModel";
 
 import Table from "../IndexedTable";
+
+import "./styles.css";
 
 const UpdateVariantsModal = () => {
   const model = ViewModel();
@@ -21,19 +18,26 @@ const UpdateVariantsModal = () => {
       onClose={model?.handleClose}
       title={"Update Product Variants"}
       primaryAction={{
-        content: "Save",
-        onAction: () => {},
+        content: "Close",
+        onAction: () => model?.handleClose(),
       }}
-      secondaryActions={[
-        {
-          content: "Close",
-          onAction: () => model?.handleClose,
-        },
-      ]}
     >
-      <Modal.Section>
-        <Table />
-      </Modal.Section>
+      <Frame>
+        <Modal.Section>
+          <LegacyCard>
+            <Layout>
+              <Layout.Section>
+                <Table headers={headers} data={model?.variants} />
+              </Layout.Section>
+            </Layout>
+          </LegacyCard>
+        </Modal.Section>
+
+        <Toastcomponent
+          message={model?.toastMessage?.message}
+          isOpen={model?.toastMessage?.isOpen}
+        />
+      </Frame>
     </Modal>
   );
 };

@@ -14,6 +14,7 @@ import {
 import SkeletonPageComponent from "../SkeletonPage";
 import UpdateVariantsModal from "../UpdateVariantsModal";
 import getNestedObject from "../../utils/getNestedObjects";
+import { useNavigate } from "@shopify/app-bridge-react";
 
 import Carousel from "../Carousel";
 import ViewModel from "./viewModel";
@@ -22,6 +23,8 @@ import "./style.css";
 
 const ProductUpdaterModal = () => {
   const model = ViewModel();
+
+  const navigate = useNavigate();
 
   const images = getNestedObject(model, ["data", "images", "edges"]);
 
@@ -33,12 +36,21 @@ const ProductUpdaterModal = () => {
         title={model.data?.["title"]}
         primaryAction={{
           content: "Update Product",
-          onAction: () => {},
+          onAction: () => model?.handleUpdateProduct(),
         }}
         secondaryActions={[
           {
-            content: "View Admin",
-            onAction: () => {},
+            content: "View Product Admin",
+            onAction: () =>
+              navigate(
+                {
+                  name: "Product",
+                  resource: {
+                    id: model?.data?.id?.replace("gid://shopify/Product/", ""),
+                  },
+                },
+                { target: "new" }
+              ),
           },
         ]}
       >
@@ -68,7 +80,7 @@ const ProductUpdaterModal = () => {
                       value={model?.collectionTitleValue}
                     />
                     <Button onClick={model?.handleOpenVariants}>
-                      Update Variants
+                      Change Variants
                     </Button>
                   </FormLayout>
                 </HorizontalGrid>
@@ -110,9 +122,11 @@ const ProductUpdaterModal = () => {
                     <TextField
                       type="number"
                       label="Stocks"
+                      value={model?.data?.totalInventory}
                       onChange={(value) =>
                         model?.handleFormChange(value, "totalInventory")
                       }
+                      disabled
                       autoComplete="off"
                     />
                   )}
@@ -142,6 +156,20 @@ const ProductUpdaterModal = () => {
         )}
       </Modal>
       <UpdateVariantsModal />
+      {model?.isUpdated && (
+        <Modal open={model?.isUpdated}>
+          <Modal.Section>
+            <Text
+              variant="heading4xl"
+              as="h1"
+              alignment="center"
+              color="success"
+            >
+              <p>Product Updated</p>
+            </Text>
+          </Modal.Section>
+        </Modal>
+      )}
     </>
   );
 };

@@ -2,14 +2,21 @@ const headers = [
   {
     title: "Variants",
     accessor: "title",
+    type: "text",
   },
   {
     title: "Price",
     accessor: "price",
+    type: "number",
   },
   {
     title: "Stocks",
     accessor: "inventoryQuantity",
+    type: "number",
+  },
+  {
+    title: "actions",
+    accessor: "components",
   },
 ];
 

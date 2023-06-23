@@ -11,7 +11,7 @@ function AutocompleteExample() {
       label="Search Products"
       value={model?.inputValue}
       prefix={<Icon source={SearchMinor} color="base" />}
-      placeholder="Search..."
+      placeholder="Search Title..."
       autoComplete="off"
     />
   );
@@ -27,6 +27,7 @@ function AutocompleteExample() {
         }}
       >
         <Autocomplete
+          loading={model?.options.length > 0 ? false : true}
           options={model?.options}
           selected={model?.selectedOptions}
           onSelect={model?.updateSelection}
