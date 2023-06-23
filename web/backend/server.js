@@ -24,10 +24,6 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 db.once("open", () => console.log("connected to the database"));
 
-app.get("testing/mongodb", (req, res) => {
-  res.status(200).send({ content: "TESTING" });
-});
-
 // checks if connection with the database is successful
 
 // launch our backend into a port
