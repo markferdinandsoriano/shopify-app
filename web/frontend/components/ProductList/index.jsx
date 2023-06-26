@@ -31,11 +31,11 @@ const ProductList = () => {
               resourceName={{ singular: "product", plural: "products" }}
               items={model?.data}
               renderItem={(item) => {
-                const { id, title, image, vendor, status } = item;
+                const { id, title, images, vendor, status } = item;
 
-                const newImage = image
-                  ? image?.src
-                  : item?.images["edges"]?.[0]?.["node"]?.["url"];
+                const newImage = images?.[0]
+                  ? images[0]?.["0"]?.src
+                  : "https://joadre.com/wp-content/uploads/2019/02/no-image.jpg";
 
                 return (
                   <ResourceItem

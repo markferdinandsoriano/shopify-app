@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.13.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -18,7 +21,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "cmd.exe /C cross-env GENERATE_SOURCEMAP=false && craco build && Xcopy /dist/js/*.js ../online-store-theme-extension/assets",
+    "build": "cross-env GENERATE_SOURCEMAP=false && react-scripts build && xcopy \"C:\\Users\\markc.soriano\\shopify-app\\product-updater\\extensions\\online-store-theme-extension-src\\dist\\js\\*.js\" \"C:\\Users\\markc.soriano\\shopify-app\\product-updater\\extensions\\online-store-theme-extension\\assets\"",
     "test": "craco test",
     "eject": "craco eject",
     "build:extension": "cd extensions/online-store-theme-extension-src && npm run build",
@@ -45,5 +48,9 @@
   "devDependencies": {
     "@craco/craco": "^7.1.0",
     "@craco/types": "^7.1.0"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
   }
 }

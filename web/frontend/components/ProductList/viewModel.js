@@ -36,11 +36,7 @@ const ViewModel = () => {
 
   React.useEffect(() => {
     if (productsDataRef?.current) {
-      const newData = productsDataRef?.current?.data?.map((items) => {
-        return {
-          ...items.node,
-        };
-      });
+      const newData = productsDataRef?.current?.datas;
 
       const autoCompleteData = productsDataRef?.current?.allProducts?.map(
         (items) => {
@@ -50,6 +46,8 @@ const ViewModel = () => {
           };
         }
       );
+
+      console.log("autoCompleteData", autoCompleteData);
 
       handleGetAllProducts(newData);
       handleAutoCompleteData(autoCompleteData);
@@ -102,14 +100,13 @@ const ViewModel = () => {
     handleSetOpenModal(true);
     handleSetLoadingSelectedProduct(true);
     try {
-      const stripID = id.replace("gid://shopify/Product/", "");
-      const result = await fetch(`/api/products/perProducts/${stripID}`, {
+      const result = await fetch(`/api/products/perProducts/${id}`, {
         method: "GET",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        params: stripID,
+        params: id,
       });
 
       if (result?.status === 200) {
@@ -122,33 +119,32 @@ const ViewModel = () => {
 
       handleGetProductValue(resultData);
     } catch (error) {
+      console.log("error opening product updater", error);
       handleSetLoadingSelectedProduct(true);
     } finally {
       handleSetLoadingSelectedProduct(false);
     }
   }, []);
 
-  const fetchDatass = async () => {
-    const result = await fetch("/api/testing/mongodb", {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+  // const fetchDatass = async () => {
+  //   const result = await fetch("/api/testing/mongodb", {
+  //     method: "GET",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
 
-    console.log("resultss", result);
-  };
+  //   console.log("resultss", result);
+  // };
 
-  React.useEffect(() => {
-    fetchDatass();
-  }, []);
+  // React.useEffect(() => {
+  //   fetchDatass();
+  // }, []);
 
   const handleFetchSelectedProduct = React.useCallback(async (data) => {
     handleSelectedProduct(data);
   }, []);
-
-  const newData = data?.data;
 
   return {
     data: allProducts,

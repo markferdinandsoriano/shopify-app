@@ -35,8 +35,6 @@ export default function PaginationComponent() {
           totalPages={model?.totalPages}
           siblings={model?.siblings}
           onChangePage={model?.handlePageChange}
-          hasNextPage={model?.pageInfo?.hasNextPage}
-          hasPrevPage={model?.pageInfo?.hasPreviousPage}
           pageLimit={model?.currentLimit}
         />
       </div>

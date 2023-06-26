@@ -1,4 +1,4 @@
-import { Autocomplete, Icon, Layout, HorizontalStack } from "@shopify/polaris";
+import { Autocomplete, Icon, Layout } from "@shopify/polaris";
 import { SearchMinor } from "@shopify/polaris-icons";
 import ViewModel from "./viewModel";
 

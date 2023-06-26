@@ -14,12 +14,10 @@ const ViewModel = () => {
   const { autoCompleteData, handleGetAllProducts, handleGetProductCounts } =
     useProductStateStore();
 
-  const deselectedOptions = useMemo(() => autoCompleteData, [autoCompleteData]);
+  const deselectedOptions = autoCompleteData;
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState(deselectedOptions);
-
-  const searchedProducts = useRef([]);
 
   const updateText = useCallback(
     (value) => {
@@ -57,24 +55,26 @@ const ViewModel = () => {
   const searchDebounce = useDebounce(inputValue, 1000);
 
   const handleFetchSearchedData = async () => {
-    const result = await fetch(`/api/product/search/${searchDebounce}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      params: searchDebounce,
-    });
+    try {
+      const result = await fetch(`/api/product/search/${searchDebounce}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        params: searchDebounce,
+      });
 
-    const resultValue = await result.json();
-    const newData = resultValue?.map((items) => {
-      return {
-        ...items.node,
-      };
-    });
+      console.log("resultss", result);
 
-    console.log("resultValue", resultValue);
-    handleGetAllProducts(newData);
+      const resultValue = await result?.json();
+
+      console.log("handle search error", resultValue);
+
+      handleGetAllProducts(resultValue);
+    } catch (error) {
+      console.log("search fetch error", error);
+    }
   };
 
   const handleFetchAll = async () => {
@@ -86,12 +86,8 @@ const ViewModel = () => {
       },
     });
 
-    const newResult = await resultValue.json();
-    const newData = newResult?.data?.map((items) => {
-      return {
-        ...items.node,
-      };
-    });
+    const newResult = await resultValue?.json();
+    const newData = newResult?.datas;
 
     handleGetAllProducts(newData);
     handleGetProductCounts(newResult?.productCount?.count);
